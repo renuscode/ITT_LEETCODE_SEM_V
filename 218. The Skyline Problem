@@ -1,0 +1,61 @@
+import java.util.*;
+
+class Solution {
+    public List<List<Integer>> getSkyline(int[][] buildings) {
+        List<List<Integer>> result = new ArrayList<>();
+        List<int[]> events = new ArrayList<>();
+        
+        // 1. Convert buildings into sweep-line events
+        // Use negative heights for start events to perfectly handle sorting rules
+        for (int[] b : buildings) {
+            events.add(new int[]{b[0], -b[2]}); // Start event
+            events.add(new int[]{b[1], b[2]});  // End event
+        }
+        
+        // 2. Sort events by x-coordinate, breaking ties correctly via height
+        Collections.sort(events, (e1, e2) -> {
+            if (e1[0] != e2[0]) {
+                return Integer.compare(e1[0], e2[0]);
+            }
+            return Integer.compare(e1[1], e2[1]);
+        });
+        
+        // 3. Max-Heap replacement: TreeMap keeps track of active heights
+        // Key: Height, Value: Frequency count of active buildings at this height
+        TreeMap<Integer, Integer> activeHeights = new TreeMap<>();
+        activeHeights.put(0, 1); // Absolute base floor level
+        
+        int prevMaxHeight = 0;
+        
+        // 4. Process events sequentially
+        for (int[] event : events) {
+            int x = event[0];
+            int h = event[1];
+            
+            if (h < 0) { 
+                // Start event: add height to active tracker
+                int actualHeight = -h;
+                activeHeights.put(actualHeight, activeHeights.getOrDefault(actualHeight, 0) + 1);
+            } else { 
+                // End event: remove one instance of this height
+                int count = activeHeights.get(h);
+                if (count == 1) {
+                    activeHeights.remove(h);
+                } else {
+                    activeHeights.put(h, count - 1);
+                }
+            }
+            
+            // Get the current peak height across all overlapping active structures
+            int currentMaxHeight = activeHeights.lastKey();
+            
+            // If the silhouette contour changed, mark it down as a key point!
+            if (currentMaxHeight != prevMaxHeight) {
+                result.add(Arrays.asList(x, currentMaxHeight));
+                prevMaxHeight = currentMaxHeight;
+            }
+        }
+        
+        return result;
+    }
+}
