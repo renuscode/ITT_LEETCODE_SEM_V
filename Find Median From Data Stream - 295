@@ -1,0 +1,39 @@
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+class MedianFinder {
+    private List<Integer> arr;
+
+    public MedianFinder() {
+        arr = new ArrayList<>();
+    }
+    
+    // Time Complexity: O(N) because shifting elements takes linear time
+    public void addNum(int num) {
+        // Use binary search to find exactly where 'num' should go to keep the list sorted
+        int index = Collections.binarySearch(arr, num);
+        
+        // If the number isn't in the list, binarySearch returns (-(insertion point) - 1)
+        if (index < 0) {
+            index = -(index + 1);
+        }
+        
+        // Insert the number at the correct sorted position
+        arr.add(index, num);      
+    }
+    
+    // Time Complexity: O(1) - instant lookup
+    public double findMedian() {
+        int n = arr.size();
+        
+        // If odd, return the exact middle element
+        if (n % 2 != 0) {
+            return arr.get(n / 2);
+        } 
+        // If even, return the average of the two middle elements
+        else {
+            return (arr.get((n / 2) - 1) + arr.get(n / 2)) / 2.0;
+        }
+    }
+}
