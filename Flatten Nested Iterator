@@ -1,0 +1,33 @@
+import java.util.Iterator;
+import java.util.List;
+import java.util.Queue;
+import java.util.LinkedList;
+
+public class NestedIterator implements Iterator<Integer> {
+    private Queue<Integer> queue;
+
+    public NestedIterator(List<NestedInteger> nestedList) {
+        this.queue = new LinkedList<>();
+        flatten(nestedList);
+    }
+
+    @Override
+    public Integer next() {
+        return queue.poll();
+    }
+
+    @Override
+    public boolean hasNext() {
+        return !queue.isEmpty();
+    }
+
+    private void flatten(List<NestedInteger> currentList) {
+        for (NestedInteger item : currentList) {
+            if (item.isInteger()) {
+                queue.add(item.getInteger());
+            } else {
+                flatten(item.getList());
+            }
+        }
+    }
+}
