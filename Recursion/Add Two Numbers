@@ -1,0 +1,34 @@
+class Solution {
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+        // Create a dummy node to act as the anchor for our result list
+        ListNode dummy = new ListNode(0);
+        ListNode current = dummy;
+        int carry = 0;
+        
+        // Loop runs as long as there are digits to add OR a leftover carry
+        while (l1 != null || l2 != null || carry != 0) {
+            int sum = carry; // Start with the carry from the previous addition
+            
+            // Add digit from l1 if it exists
+            if (l1 != null) {
+                sum += l1.val;
+                l1 = l1.next; // Move to the next digit
+            }
+            
+            // Add digit from l2 if it exists
+            if (l2 != null) {
+                sum += l2.val;
+                l2 = l2.next; // Move to the next digit
+            }
+            
+            // Calculate the new carry (either 0 or 1)
+            carry = sum / 10;
+            
+            // Create a new node with the single-digit remainder and link it
+            current.next = new ListNode(sum % 10);
+            current = current.next; // Move our result pointer forward
+        }
+        
+        return dummy.next; // The actual head of our summed list
+    }
+}
